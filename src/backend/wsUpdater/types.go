@@ -41,7 +41,7 @@ func (u *UpdateHandler) RegisterConnection(c *gin.Context) {
 
 	ws, err := getWebsocket(c)
 	if err != nil {
-		log.Printf("Couldn't register websocket\n%v", err)
+		log.Printf("Couldn't register websocket\n%v\n", err)
 		return
 	}
 	u.wsConnections = append(u.wsConnections, ws)

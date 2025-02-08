@@ -12,8 +12,7 @@ import (
 	"time"
 )
 
-func main() {
-	cfg, err := config.GetConfig()
+func main() { cfg, err := config.GetConfig()
 	if err != nil {
 		log.Fatal("No config file")
 	}
@@ -53,12 +52,12 @@ func main() {
 
 		resp, err := http.Post(cfg.ApiUrl, "applicatin/json", bytes.NewReader(pingJson))
 		if err != nil {
-			log.Printf("Couldn't post ping results\n%v", err)
+			log.Printf("Couldn't post ping results\n%v\n", err)
 			continue
 		}
 
 		if resp.StatusCode != http.StatusOK {
-			log.Printf("Server did not accept ping update\n%v", err)
+			log.Printf("Server did not accept ping update\n%v\n", err)
 		}
 
 	}
