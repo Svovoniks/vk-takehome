@@ -1,0 +1,34 @@
+services:
+  database:
+    container_name: database
+    env_file: .env
+    build:
+       context: ./docker/database
+
+  backend:
+    depends_on: [database]
+    container_name: backend
+    env_file: .env
+    ports:
+      -  "4242:4242"
+    build:
+       context: .
+       dockerfile: ./docker/backend/Dockerfile
+
+  frontend:
+    depends_on: [backend]
+    container_name: frontend
+    ports:
+      -  "80:80"
+    build:
+       context: .
+       dockerfile: ./docker/frontend/Dockerfile
+
+  pinger:
+    depends_on: [backend]
+    container_name: pinger
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    build:
+       dockerfile: ./docker/pinger/Dockerfile
+
