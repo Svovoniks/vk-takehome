@@ -2,6 +2,8 @@ package docker
 
 import (
 	"context"
+	"log"
+	"net"
 	"strconv"
 
 	"github.com/docker/docker/api/types/container"
@@ -28,6 +30,10 @@ func GetContainers() ([]*Container, error) {
 		}
 		if inspect.NetworkSettings != nil {
 			for _, network := range inspect.NetworkSettings.Networks {
+                if ip := net.ParseIP(network.IPAddress); ip == nil{
+                    log.Println("Ivalid ip, skipping...")
+                    continue
+                }
 				containers = append(containers,
 					&Container{
 						Ip:  network.IPAddress,

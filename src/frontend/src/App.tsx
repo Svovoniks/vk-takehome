@@ -1,6 +1,6 @@
 import { Layout, Table } from "antd";
 import { ColumnType } from "antd/es/table";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 const { Header, Content } = Layout;
 
@@ -10,8 +10,14 @@ type IpData = {
     pinged_at: string
 }
 
-const API_PING_DATA_URL = "http://localhost:4242/events"
-const API_WS_URL = "ws://localhost:4242/ws"
+const columns: ColumnType<IpData>[] = [
+    { title: "IP", dataIndex: "ip" },
+    { title: "Ping ms", dataIndex: "ping_ms" },
+    { title: "Last ping date", dataIndex: "pinged_at" },
+];
+
+const API_PING_DATA_URL = "http://localhost:4242/events";
+const API_WS_URL = "ws://localhost:4242/ws";
 
 function parseIpData(data: []): IpData[] {
     return data.map((a, i) => ({
@@ -24,43 +30,45 @@ function parseIpData(data: []): IpData[] {
 
 function App() {
     const [tableData, setTableData] = useState<IpData[]>([])
-    const updateData = () => {
-        fetch(API_PING_DATA_URL).then(resp => resp.json()).then(json => {
-            setTableData(parseIpData(json))
-        }).catch(e => console.log(e))
-    }
 
-    useEffect(() => {
-        updateData()
+    const updateData = useCallback(async () => {
+        try {
+            const resp = await fetch(API_PING_DATA_URL);
+            const json = await resp.json();
+            setTableData(parseIpData(json));
+        } catch (e) {
+            console.error("Error fetching data:", e);
+        }
     }, [])
 
     useEffect(() => {
-        let ws: WebSocket | null = null;
+        updateData()
+    }, [updateData])
 
+    const ws = useRef<WebSocket | null>(null);
+    useEffect(() => {
         const connect = () => {
-            if (ws) {
-                ws.close()
+            if (ws.current) {
+                ws.current.close()
             }
 
-            ws = new WebSocket(API_WS_URL)
+            ws.current = new WebSocket(API_WS_URL)
 
-            ws.onopen = () => {
-                console.log("Connected to WebSocket");
-            };
+            ws.current.onopen = () => console.log("Connected to WebSocket");
 
-            ws.onmessage = () => {
+            ws.current.onmessage = () => {
                 console.log("Updating");
                 updateData()
             }
 
-            ws.onerror = (error) => {
-                ws?.close()
+            ws.current.onerror = (error) => {
+                ws.current?.close()
                 console.error("WebSocket error:", error);
             };
 
-            ws.onclose = () => {
+            ws.current.onclose = () => {
                 console.log("WebSocket connection closed");
-                ws = null;
+                ws.current = null;
                 setTimeout(() => {
                     console.log("Reconnecting...");
                     connect()
@@ -72,17 +80,11 @@ function App() {
         connect()
 
         return () => {
-            if (ws) {
-                ws.close()
+            if (ws.current) {
+                ws.current.close()
             }
         };
-    }, []);
-
-    const columns: ColumnType[] = [
-        { title: "IP", dataIndex: "ip" },
-        { title: "Ping ms", dataIndex: "ping_ms" },
-        { title: "Ping date", dataIndex: "pinged_at" },
-    ];
+    }, [updateData]);
 
     return (
         <Layout style={{ width: '100vw', height: '100vh' }}>

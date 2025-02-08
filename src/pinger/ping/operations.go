@@ -3,7 +3,7 @@ package ping
 import (
 	"time"
 
-	"github.com/prometheus-community/pro-bing"
+	probing "github.com/prometheus-community/pro-bing"
 )
 
 func DoPing(ip string) (float64, error) {

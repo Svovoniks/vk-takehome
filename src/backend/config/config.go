@@ -42,17 +42,6 @@ func GetConfig() (*Config, error) {
 		return nil, errors.New("DB_NAME is not set")
 	}
 
-	// data, err := os.ReadFile("cfg.json")
-	// if err != nil {
-	// 	return nil, err
-	// }
-	//
-	// var cfg Config
-	//
-	// if err = json.Unmarshal(data, &cfg); err != nil {
-	// 	return nil, err
-	// }
-
 	return &cfg, nil
 
 }
