@@ -44,6 +44,9 @@ func GetDB(cfg *config.Config) (*DB, error) {
 }
 
 func (d *DB) PutBulk(pingData ping.PingEventList) error {
+	if len(pingData) == 0 {
+		return nil
+	}
 	valueStrings := make([]string, 0, len(pingData))
 	valueArgs := make([]interface{}, 0, len(pingData)*3)
 

@@ -106,7 +106,7 @@ func addEvent(c *gin.Context, db *event_db.DB) {
 	}
 
 	if err := db.PutBulk(events); err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		c.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}

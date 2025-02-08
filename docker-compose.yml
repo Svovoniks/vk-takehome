@@ -27,8 +27,11 @@ services:
   pinger:
     depends_on: [backend]
     container_name: pinger
+    privileged: true
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+      - /var/run/docker:/var/run/docker
+      - /proc:/docker/proc
     build:
        dockerfile: ./docker/pinger/Dockerfile
 

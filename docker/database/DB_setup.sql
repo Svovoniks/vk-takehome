@@ -10,3 +10,4 @@ CREATE TABLE "main.ping_event" (
     pinged_at TIMESTAMP
 );
 
+INSERT INTO "main.ping_event"(ip, ping_ms, pinged_at) VALUES (?, ?, ?),(?, ?, ?),(?, ?, ?),(?, ?, ?)
