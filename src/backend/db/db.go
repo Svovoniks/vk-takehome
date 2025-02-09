@@ -39,7 +39,7 @@ func GetDB(cfg *config.Config) (*DB, error) {
 
 	return &DB{
 		Db:    db,
-		Table: "\"main.ping_event\"",
+		Table:cfg.DbTable,
 	}, nil
 }
 

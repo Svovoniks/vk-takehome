@@ -11,6 +11,7 @@ type Config struct {
 	DbHost     string
 	DbPort     string
 	DbName     string
+	DbTable    string
 }
 
 func GetConfig() (*Config, error) {
@@ -40,6 +41,11 @@ func GetConfig() (*Config, error) {
 	cfg.DbName, exists = os.LookupEnv("DB_NAME")
 	if !exists {
 		return nil, errors.New("DB_NAME is not set")
+	}
+
+	cfg.DbTable, exists = os.LookupEnv("DB_TABLE")
+	if !exists {
+		return nil, errors.New("DB_TABLE is not set")
 	}
 
 	return &cfg, nil

@@ -15,5 +15,6 @@ FROM gcr.io/distroless/base-debian11 AS build-release-stage
 WORKDIR /
 
 COPY --from=build-stage /backend /backend
+COPY ../../migrations ./migrations
 
 ENTRYPOINT ["/backend"]

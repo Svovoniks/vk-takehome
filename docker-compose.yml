@@ -1,14 +1,24 @@
 services:
   database:
     container_name: database
-    env_file: .env
+    env_file: ./config/database.env
     build:
        context: ./docker/database
+    restart: always
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "user", "-d", "ping_db"]
+      interval: 5s
+      timeout: 60s
+      retries: 5
 
   backend:
-    depends_on: [database]
+    depends_on:
+      database:
+        condition: service_healthy
     container_name: backend
-    env_file: .env
+    env_file:
+      - ./config/database.env
+      - ./config/backend.env
     ports:
       -  "4242:4242"
     build:
@@ -17,15 +27,17 @@ services:
 
   frontend:
     depends_on: [backend]
+    restart: always
     container_name: frontend
     ports:
-      -  "80:80"
+      -  "9876:80"
     build:
        context: .
        dockerfile: ./docker/frontend/Dockerfile
 
   pinger:
     depends_on: [backend]
+    restart: always
     container_name: pinger
     privileged: true
     volumes:

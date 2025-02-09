@@ -60,6 +60,10 @@ func main() {
 		log.Fatal(err)
 	}
 
+	if err := event_db.MigrateDB(cfg); err != nil {
+		log.Fatal("Couldn't migrate database:\n", err)
+	}
+
 	db, err := event_db.GetDB(cfg)
 	if err != nil {
 		log.Fatal("Couldn't connect to database:\n", err)
@@ -69,7 +73,7 @@ func main() {
 	router.Use(gin.Recovery())
 	router.Use(gin.Logger())
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost"},
+		AllowOrigins:     []string{"http://localhost:9876"},
 		AllowMethods:     []string{"GET", "POST"},
 		AllowHeaders:     []string{"Origin"},
 		ExposeHeaders:    []string{"Content-Length"},
