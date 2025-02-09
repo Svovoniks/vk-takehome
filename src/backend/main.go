@@ -3,8 +3,8 @@ package main
 import (
 	"backend/config"
 	"backend/db"
+	"backend/ping"
 	"backend/wsUpdater"
-	"github.com/Svovoniks/vk-takehome/src/common_go"
 	"log"
 	"net/http"
 	"time"
